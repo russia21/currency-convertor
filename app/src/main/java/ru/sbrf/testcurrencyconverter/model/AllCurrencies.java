@@ -8,7 +8,7 @@ import org.simpleframework.xml.Root;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/** PURPOSE -- this class is required for collecting all information about current currencies. */
 
 @Root(name = "ValCurs")
 

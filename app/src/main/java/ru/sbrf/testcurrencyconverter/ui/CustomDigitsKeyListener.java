@@ -1,7 +1,7 @@
 package ru.sbrf.testcurrencyconverter.ui;
 
 /**
- * Created by Rem2 on 24.05.2017.
+ * PURPOSE -- this class is used for ergonomic keyboard for Amount population.
  */
 
 import android.text.method.DigitsKeyListener;

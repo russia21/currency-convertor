@@ -2,15 +2,12 @@ package ru.sbrf.testcurrencyconverter.ui;
 
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Toast;
 
 import org.simpleframework.xml.Serializer;
@@ -19,20 +16,22 @@ import org.simpleframework.xml.core.Persister;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.sbrf.testcurrencyconverter.CurrenciesManager;
 import ru.sbrf.testcurrencyconverter.R;
 import ru.sbrf.testcurrencyconverter.model.AllCurrencies;
-import ru.sbrf.testcurrencyconverter.model.Valute;
+import ru.sbrf.testcurrencyconverter.model.Currency;
 import ru.sbrf.testcurrencyconverter.utils.PrefsHelper;
 
 
 /** PURPOSE - Activity for currency selection from Grid.  */
 
-public class CurrencySelectorActivity extends ActionBarActivity implements CardClickedInterface {
+public class CurrencySelectorActivity extends AppCompatActivity implements CardClickedInterface {
 
-  private AllCurrencies allCurrencies;        // private list of all currencies
   private List<ItemObject> allItems = null;   // special list for visualizing the grid selector
 
-  /**********************************************************************************************************************/
+  /**
+   * Overriden onCreate method.
+   * */
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -43,15 +42,11 @@ public class CurrencySelectorActivity extends ActionBarActivity implements CardC
     Toolbar topToolBar = (Toolbar)findViewById(R.id.toolbar);
     topToolBar.setTitle(R.string.choose_valute);
 
-    /* Get currencies list */
-    try
-    {
-      Serializer ser = new Persister();
-      allCurrencies = ser.read(AllCurrencies.class, PrefsHelper.s_getDataFromPrefs(PrefsHelper.S__STG_CURRENCIES_XML, this));
-
-    } catch (Exception e)
-    {
-      e.printStackTrace();
+    /* Make sure that currencies are loaded. */
+    if (!CurrenciesManager.areCurrenciesLoaded()) {
+      Toast.makeText(this, R.string.currencies_not_loaded, Toast.LENGTH_SHORT).show();
+      finish();
+      return;
     }
 
     List<ItemObject> rowListItem = getAllItemList();
@@ -66,8 +61,22 @@ public class CurrencySelectorActivity extends ActionBarActivity implements CardC
 
   }
 
-  /**********************************************************************************************************************
-   * PURPOSE -- function is responsible for building allItems - separate items, used for Grid building.
+  /**
+   * Method is called from Recycler View Holder, when user clicks on it.
+   */
+
+  @Override
+  public void onCardClicked (int position)
+  {
+    /* Send result into calling Activity. Pass code. */
+    Intent intent = new Intent();
+    intent.putExtra("code", getAllItemList().get (position).getName());
+    setResult(RESULT_OK, intent);
+    finish();
+  }
+
+  /**
+   * Method is responsible for building allItems - separate items, used for Grid building.
    * Builds allItems only once.
    *
    * @return Returns allItems.
@@ -80,10 +89,9 @@ public class CurrencySelectorActivity extends ActionBarActivity implements CardC
     }
 
     /* Build all items. */
-
     allItems = new ArrayList<ItemObject>();
 
-    // Insert Rouble, USD, EUR first
+    /* Insert Rouble, USD, EUR first. */
 
     int resourceId = getResources().getIdentifier("rt_rub", "drawable", getPackageName());
     allItems.add(new ItemObject("RUB", resourceId));
@@ -94,30 +102,19 @@ public class CurrencySelectorActivity extends ActionBarActivity implements CardC
     resourceId = getResources().getIdentifier("rt_eur", "drawable", getPackageName());
     allItems.add(new ItemObject("EUR", resourceId));
 
+    /* Insert all other currencies. */
 
-    for (Valute valute : allCurrencies.getList()) {
+    for (Currency currency : CurrenciesManager.getList()) {
 
-      // skip already added currencies
-      if (valute.ms_charCode.equals("USD") || valute.ms_charCode.equals("EUR")) {
+      /* Skip already added currencies. */
+      if (currency.getCharCode().equals("USD") || currency.getCharCode().equals("EUR")) {
         continue;
       }
-      resourceId = getResources().getIdentifier("rt_" + valute.ms_charCode.toLowerCase(), "drawable", getPackageName());
-      allItems.add(new ItemObject(valute.ms_charCode, resourceId));
+      resourceId = getResources().getIdentifier("rt_" + currency.getCharCode().toLowerCase(), "drawable", getPackageName());
+      allItems.add(new ItemObject(currency.getCharCode(), resourceId));
     }
 
     return allItems;
   }
 
-  /**********************************************************************************************************************/
-
-  @Override
-  public void v_cardClicked(int position)
-  {
-    // send result into calling Activity. Pass code.
-
-    Intent intent = new Intent();
-    intent.putExtra("code", getAllItemList().get (position).getName());
-    setResult(RESULT_OK, intent);
-    finish();
-  }
 }

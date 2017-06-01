@@ -10,7 +10,7 @@ public interface RefreshInterface
    * @param s_xml -- extracted xml from CBR server, or null - if we need to extract the XML from cache.
    */
 
-  void refreshCurrencies (String s_xml);
+  void refreshCurrenciesFromCache(String s_xml);
 
   /**
    * PURPOSE -- sets the informational flag which shows that we're in refreshing process.

@@ -2,7 +2,6 @@ package ru.sbrf.testcurrencyconverter.model;
 
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.ElementList;
-import org.simpleframework.xml.Namespace;
 import org.simpleframework.xml.Root;
 
 import java.util.ArrayList;
@@ -15,7 +14,7 @@ import java.util.List;
 public class AllCurrencies
 {
   @ElementList(required = true, inline = true)
-  private List<Valute> list;
+  private List<Currency> list;
 
   @Attribute(required = false, name = "Date")
   private String dateRefreshed;
@@ -34,7 +33,7 @@ public class AllCurrencies
 
   /** Getters and misc **/
 
-  public List<Valute> getList()
+  public List<Currency> getList()
   {
     return list;
   }
@@ -53,20 +52,20 @@ public class AllCurrencies
    *
    * @param code -- input -- currency code like "USD" or "RUB"
    *
-   * @return -- built or found Valute object.
+   * @return -- built or found Currency object.
     */
 
-  public Valute getValuteByCode (String code) {
+  public Currency getCurrencyByCode(String code) {
 
-    // for rouble - build the currency from the scratch
-    if (code.equals("RUB")) {
-      return new Valute ("RUB");
+    /* For rouble - build the currency from the scratch. */
+    if ("RUB".equals(code)) {
+      return new Currency(true);
     }
 
-    // try to find the currency in the list
-    for (Valute valute : getList()) {
-      if (valute.ms_charCode.equals (code)) {
-        return valute;
+    /* Try to find the currency in the list. */
+    for (Currency currency : getList()) {
+      if (currency.getCharCode().equals (code)) {
+        return currency;
       }
     }
 
@@ -78,18 +77,52 @@ public class AllCurrencies
    * PURPOSE -- function is used for conversion of money amount from input currency into the output
    *
    * @param value -- input -- the value to convert
-   * @param inputValute  -- input -- currency From
-   * @param outputValute -- input -- currency To
+   * @param inputCurrency  -- input -- currency From
+   * @param outputCurrency -- input -- currency To
    *
    * @return -- RETURNS converted amount
    */
 
-  public static double convert(double value, Valute inputValute, Valute outputValute)
+  public static double convert(double value, Currency inputCurrency, Currency outputCurrency)
   {
     // calculate
-    double cursFromInToRouble = inputValute.md_value / ((double) inputValute.j_nominal);
-    double cursFromRoubleToOut = ((double) outputValute.j_nominal) / outputValute.md_value;
+    double cursFromInToRouble = inputCurrency.getDoubleValue() / ((double) inputCurrency.getNominal());
+    double cursFromRoubleToOut = ((double) outputCurrency.getNominal()) / outputCurrency.getDoubleValue();
 
     return value * cursFromInToRouble * cursFromRoubleToOut;
+  }
+
+  /**
+   * PURPOSE -- method is used to clear list of currencies.
+   */
+
+  public void clear () {
+    if (getList() != null && getList().size() > 0) {
+      getList().clear();
+    }
+  }
+
+  @Override
+  public boolean equals(Object o)
+  {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    AllCurrencies that = (AllCurrencies) o;
+
+    if (list != null ? !list.equals(that.list) : that.list != null) return false;
+    if (dateRefreshed != null ? !dateRefreshed.equals(that.dateRefreshed) : that.dateRefreshed != null)
+      return false;
+    return name != null ? name.equals(that.name) : that.name == null;
+
+  }
+
+  @Override
+  public int hashCode()
+  {
+    int result = list != null ? list.hashCode() : 0;
+    result = 31 * result + (dateRefreshed != null ? dateRefreshed.hashCode() : 0);
+    result = 31 * result + (name != null ? name.hashCode() : 0);
+    return result;
   }
 }

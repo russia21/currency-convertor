@@ -11,6 +11,7 @@ import static org.junit.Assert.*;
  */
 public class AllCurrenciesTest
 {
+
   static final String XML_EXAMPLE = "<ValCurs Date=\"27.05.2017\" name=\"Foreign Currency Market\">\n" +
     "        <Valute ID=\"R01010\">\n" +
     "        \t<NumCode>036</NumCode>\n" +
@@ -53,26 +54,35 @@ public class AllCurrenciesTest
   }
 
   @Test
-  public void getValuteByCode() throws Exception
+  public void getCurrencyByCode() throws Exception
   {
     AllCurrencies allCurrencies = getAllCurrencies ();
-    Valute valute = allCurrencies.getValuteByCode("AZN");
-    assertEquals(valute.ms_valuteId, "R01020A");
+    Currency currency = allCurrencies.getCurrencyByCode("AZN");
+    assertEquals(currency.getCurrencyId(), "R01020A");
   }
 
   @Test
   public void convert() throws Exception
   {
     AllCurrencies allCurrencies = getAllCurrencies ();
-    Valute valute1 = allCurrencies.getValuteByCode("AZN");
-    Valute valute2 = allCurrencies.getValuteByCode("AUD");
-    assertEquals(799400.2245338791, AllCurrencies.convert(100500, valute1,valute2), 0.00001);
+    Currency currency1 = allCurrencies.getCurrencyByCode("AZN");
+    Currency currency2 = allCurrencies.getCurrencyByCode("AUD");
+    assertEquals(799400.2245338791, AllCurrencies.convert(100500, currency1, currency2), 0.00001);
 
-    assertEquals(799.4002245338791, AllCurrencies.convert(100.50, valute1,valute2), 0.00001);
+    assertEquals(799.4002245338791, AllCurrencies.convert(100.50, currency1, currency2), 0.00001);
 
-    assertEquals(12634.785042610337, AllCurrencies.convert(100500, valute2,valute1), 0.00001);
+    assertEquals(12634.785042610337, AllCurrencies.convert(100500, currency2, currency1), 0.00001);
 
-    assertEquals(0.06285962, AllCurrencies.convert(0.50, valute2,valute1), 0.00001);
+    assertEquals(0.06285962, AllCurrencies.convert(0.50, currency2, currency1), 0.00001);
+  }
+
+
+  @Test
+  public void clear() throws Exception
+  {
+    AllCurrencies allCurrencies = getAllCurrencies ();
+    allCurrencies.clear();
+    assertEquals(allCurrencies.getList().size(), 0);
   }
 
 }

@@ -3,75 +3,56 @@ package ru.sbrf.testcurrencyconverter.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-/** PURPOSE -- class for save/recall preferencies. */
+/** PURPOSE -- class for save/recall preferences. */
 
 public class PrefsHelper
 {
 
   /** Preferences settings names. */
-  private static final String S__STG_PREFERENCES = "ExchPrefs";
+  private static final String SETTINGS_PREFERENCES = "ExchPrefs";
 
-  public static final String S__STG_CURRENCIES_XML = "CurrenciesXML";
-  public static final String S__STG_CURRENCY_FROM = "CurrencyFrom";
-  public static final String S__STG_CURRENCY_TO = "CurrencyTo";
+  public static final String SETTINGS_CURRENCIES_XML = "CurrenciesXML";
+  public static final String SETTINGS_CURRENCY_FROM = "CurrencyFrom";
+  public static final String SETTINGS_CURRENCY_TO = "CurrencyTo";
 
-/*************************************************************************************************************
- * PURPOSE - get data from preferencies.
- *
- * @param s_name -- input -- name for data to save (S__STG_PREFERENCES_ constant)
- * @param o_context --  input -- context
- * @param defaultValue -- input -- default value
- *
- * @return  Stored token or empty string if nothing found.
- */
+  /**
+   * PURPOSE - get data from preferences.
+   *
+   * @param name          -- input -- name for data to save (SETTINGS_PREFERENCES_ constant)
+   * @param context       --  input -- context
+   * @param defaultValue  -- input -- default value
+   *
+   * @return  Stored data or null if preferences not created yet.
+   */
 
-public static String s_getDataFromPrefs (String s_name, Context o_context, String  defaultValue)
-{
-  String s_tokenStored = "";
+  public static String getDataFromPrefs(String name, Context context, String  defaultValue) {
 
-  SharedPreferences o_sharedPreferences  = o_context.getSharedPreferences(S__STG_PREFERENCES, Context.MODE_PRIVATE);
+    SharedPreferences sharedPreferences  = context.getSharedPreferences(SETTINGS_PREFERENCES, Context.MODE_PRIVATE);
 
-  if (o_sharedPreferences != null)
-  {
-    s_tokenStored = o_sharedPreferences.getString(s_name, defaultValue);
+    if (sharedPreferences == null) {
+      return null;
+    }
+
+    return sharedPreferences.getString(name, defaultValue);
   }
 
-  return s_tokenStored;
-}
+  /**
+   * PURPOSE - stores data into private shared preferences.
+   *
+   * @param name    -- input -- name for data to save (S__STG_PREFERENCES_ constant)
+   * @param value   -- input -- data to save
+   * @param context -- input -- context
+   *
+   */
 
-/*************************************************************************************************************
- * PURPOSE - get data from preferencies.
- *
- * @param s_name -- input -- name for data to save (S__STG_PREFERENCES_ constant)
- * @param o_context --  input -- context
- *
- * @return  Stored token or empty string if nothing found.
- */
+  public static void saveDataIntoPrefs(String name, String value, Context context)
+  {
+    SharedPreferences sharedPreferences  = context.getSharedPreferences(SETTINGS_PREFERENCES, Context.MODE_PRIVATE);
 
-public static String s_getDataFromPrefs (String s_name, Context o_context)
-{
-  return s_getDataFromPrefs (s_name, o_context, "");
-}
+    SharedPreferences.Editor editor = sharedPreferences.edit();
+    editor.putString(name, value);
 
-
-/*************************************************************************************************************
- * PURPOSE - stores data into shared prefs.
- *
- * @param s_name -- input -- name for data to save (S__STG_PREFERENCES_ constant)
- * @param s_value -- input -- data to save
- * @param o_context -- input -- context
- *
- */
-
-public static void v_saveDataIntoPrefs (String s_name, String s_value, Context o_context)
-{
-  SharedPreferences o_sharedPreferences  = o_context.getSharedPreferences(S__STG_PREFERENCES, Context.MODE_PRIVATE);
-
-/* Save token and synchronization flag. */
-
-  SharedPreferences.Editor o_editor = o_sharedPreferences.edit();
-  o_editor.putString(s_name, s_value);
-  o_editor.commit();
-}
+    editor.commit();
+  }
 
 }

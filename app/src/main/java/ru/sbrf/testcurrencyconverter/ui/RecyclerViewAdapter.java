@@ -10,24 +10,23 @@ import java.util.List;
 
 import ru.sbrf.testcurrencyconverter.R;
 
-/** PURPOSE -- adapter for Recycle View */
+/** PURPOSE -- adapter for Recycle View with Flags cards. */
 
 class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolders> {
 
   private List<ItemObject> itemList;
-  private CardClickedInterface mo_cardClickedInterface;
+  private CardClickedInterface cardClickedInterface; /* interface, used for transmitting information about parent activity */
 
   RecyclerViewAdapter(Context context, List<ItemObject> itemList, CardClickedInterface cardClickedInterface) {
     this.itemList = itemList;
-    mo_cardClickedInterface = cardClickedInterface;
+    this.cardClickedInterface = cardClickedInterface;
   }
 
   @Override
   public RecyclerViewHolders onCreateViewHolder(ViewGroup parent, int viewType) {
 
     View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_view_list, null);
-    RecyclerViewHolders rcv = new RecyclerViewHolders(layoutView, mo_cardClickedInterface);
-    return rcv;
+    return new RecyclerViewHolders(layoutView, cardClickedInterface);
   }
 
   @Override

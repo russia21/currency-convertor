@@ -2,11 +2,11 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/card_view"
-    android:layout_width="80dp"
+    android:layout_width="@dimen/cardview_width"
     android:layout_height="wrap_content"
     card_view:cardUseCompatPadding="true"
-    card_view:cardCornerRadius="8dp"
-    android:layout_marginBottom="16dp">
+    card_view:cardCornerRadius="@dimen/cardview_card_corber_radius"
+    android:layout_marginBottom="@dimen/cardview_layout_margin_bottom">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -24,13 +24,13 @@
             android:id="@+id/country_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="13sp"
+            android:textSize="@dimen/cardview_title_size"
             android:text="@string/country_name"
             android:textColor="@color/orange"
             android:gravity="center"
             android:layout_below="@+id/country_flag"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp"
+            android:paddingBottom="@dimen/cardview_padding"
+            android:paddingTop="@dimen/cardview_padding"
             android:layout_alignParentBottom="true"
             android:background="@color/black"/>
 

@@ -8,77 +8,76 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.provider.Settings;
 
+import ru.sbrf.testcurrencyconverter.R;
+
 /**
- * PURPOSE -- useful utils, which helps to work without internet connection.
+ * Class contains useful static methods, which help to work without internet connection.
  */
 
 public class InetHelper
 {
 
 
-/******************************************************************************************************
- * PURPOSE -- checks whether software is online. Requires ACCESS_NETWORK_STATE
- *
- * @param o_context -- input -- context of the current operation
- */
+  /**
+   * Method checks whether software is online. Requires ACCESS_NETWORK_STATE
+   *
+   * @param context -- input -- context of the current operation
+   */
 
-public static boolean b_isOnline (Context o_context)
-{
-  ConnectivityManager o_cm = (ConnectivityManager) o_context.getSystemService(Context.CONNECTIVITY_SERVICE);
-  NetworkInfo o_netInfo = o_cm.getActiveNetworkInfo ();
-  if (o_netInfo != null && o_netInfo.isConnected ())
+  public static boolean isOnline(Context context)
   {
+    ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+    NetworkInfo netInfo = connectivityManager.getActiveNetworkInfo ();
+    return (netInfo != null) && (netInfo.isConnected());
+  }
+
+  /**
+   * Method asks user to turn internet connection on.
+   *
+   * @param msg       -- input -- message for turning internet on
+   * @param ok        --  input -- positive button
+   * @param cancel  -- input -- cancel button
+   * @param context -- input -- context
+   *
+   */
+
+  private static void askTurnInternetOn(String msg, String ok, String cancel, final Context context)
+  {
+    new AlertDialog.Builder (context)
+      .setTitle(R.string.title_web_access)
+      .setMessage (msg)
+      .setPositiveButton(ok, new DialogInterface.OnClickListener()
+      {
+        @Override
+        public void onClick(DialogInterface dialog, int which)
+        {
+          context.startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
+        }
+      })
+      .setNegativeButton(cancel, new DialogInterface.OnClickListener()
+      {
+        @Override
+        public void onClick(DialogInterface dialog, int which)
+        {
+        }
+      })
+      .show();
+  }
+
+  /**
+   * PURPOSE -- asks user to turn internet connection on.
+   *
+   * @param msg -- input -- message for turning internet on
+   * @param context -- input -- context
+   *
+   * @return RETURNS -- true always.
+   */
+
+  public static boolean askTurnInternetOn(String msg, Context context)
+  {
+    askTurnInternetOn(msg, context.getResources().getString(R.string.turn_on),
+      context.getResources().getString(R.string.cancel), context);
     return true;
   }
-  return false;
-}
-
-/******************************************************************************************************
- * PURPOSE -- asks user to turn internet connection on.
- *
- * @param s_msg -- input -- message for turning internet on
- * @param s_ok --  input -- positive button
- * @param s_cancel -- input -- cancel button
- * @param o_context -- input -- context
- *
- */
-
-private static void v_turnInternetOnBtns(String s_msg, String s_ok, String s_cancel, final Context o_context)
-{
-  new AlertDialog.Builder (o_context)
-    .setTitle("Доступ к сети интернет")
-    .setMessage (s_msg)
-    .setPositiveButton(s_ok, new DialogInterface.OnClickListener()
-    {
-      @Override
-      public void onClick(DialogInterface dialog, int which)
-      {
-        o_context.startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
-      }
-    })
-    .setNegativeButton(s_cancel, new DialogInterface.OnClickListener()
-    {
-      @Override
-      public void onClick(DialogInterface dialog, int which)
-      {
-      }
-    })
-    .show();
-}
-
-/******************************************************************************************************
- * PURPOSE -- asks user to turn internet connection on.
- *
- * @param s_msg -- input -- message for turning internet on
- * @param o_context -- input -- context
- *
- * @return RETURNS -- true always.
- */
-
-public static boolean b_turnInternetOn (String s_msg, Context o_context)
-{
-  v_turnInternetOnBtns (s_msg, "Включить", "Отмена", o_context);
-  return true;
-}
 
 }  /* End of InetHelper class */
